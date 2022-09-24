@@ -1,27 +1,38 @@
-FROM --platform=linux/amd64 ubuntu:latest
-
-RUN apk --no-cache add curl xz
-
+FROM --platform=linux/amd64 debian:bullseye-slim
 ARG CALIBRE_RELEASE="6.5.0"
 
-RUN curl -o /tmp/calibre-tarball.txz -L "https://download.calibre-ebook.com/${CALIBRE_RELEASE}/calibre-${CALIBRE_RELEASE}-x86_64.txz" && \
-    mkdir -p /opt/calibre && \
-    tar xvf /tmp/calibre-tarball.txz -C /opt/calibre && \
-    rm -rf /tmp/*
+RUN apt-get update && \
+  apt-get install --no-install-recommends -y ca-certificates curl xz-utils && \
+  curl -o /tmp/calibre-tarball.txz -L "https://download.calibre-ebook.com/${CALIBRE_RELEASE}/calibre-${CALIBRE_RELEASE}-x86_64.txz" && \
+  mkdir -p /opt/calibre && \
+  tar xpf /tmp/calibre-tarball.txz -C /opt/calibre
 
+FROM --platform=linux/amd64 debian:bullseye-slim
 
-FROM --platform=linux/amd64 debian:buster-slim
-
-RUN apt-get update && apt-get install -y \
-    dnsutils \
+RUN apt-get update && \
+  apt-get install --no-install-recommends -y \
+    ca-certificates \
+    hicolor-icon-theme \
     iproute2 \
+    libegl1 \
     libfontconfig \
-    libgl1 \
-    && rm -rf /var/lib/apt/lists/*
+    libglx0 \
+    libnss3 \
+    libopengl0 \
+    libxcomposite1 \
+    libxkbcommon0 \
+    libxkbfile1 \
+    libxrandr2 \
+    libxrandr2 \
+    libxtst6 \
+    xdg-utils && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/*
+
 COPY --from=0 /opt/calibre /opt/calibre
 RUN /opt/calibre/calibre_postinstall && \
-    mkdir /library && \
-    touch /library/metadata.db
+    mkdir /ebooks && \
+    touch /ebooks/metadata.db
 
 COPY start-calibre-server.sh .
 
