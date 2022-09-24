@@ -16,7 +16,7 @@ if git diff --exit-code Dockerfile; then
 fi
 
 git add Dockerfile
-git commit -m "update Calibre to ${TAG}"
+git commit -m "Update Calibre to ${TAG}"
 git tag -f "${TAG}"
 
 git push -f --tags
