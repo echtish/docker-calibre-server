@@ -1,5 +1,5 @@
 FROM --platform=linux/amd64 debian:bullseye-slim
-ARG CALIBRE_RELEASE="8.1.1"
+ARG CALIBRE_RELEASE="8.2.0"
 
 RUN apt-get update && \
   apt-get install --no-install-recommends -y ca-certificates curl xz-utils && \
